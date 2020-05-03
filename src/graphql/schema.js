@@ -1,13 +1,19 @@
 const { buildSchema } = require('graphql');
 
 module.exports = buildSchema(`
+    schema {
+        query: Query
+        mutation: Mutation
+    }
+
     type Query {
         menu: [MenuCategory]!
     }
 
     type Mutation {
-        createMenuItem(input: CreateMenuItemInput): MenuItem
-        createOrder(input: CreateOrderInput): String
+        createMenuItem(input: CreateMenuItemInput!): MenuItem
+        editMenuItem(input: EditMenuItemInput): MenuItem
+        createOrder(input: CreateOrderInput!): String
     }
 
     type MenuCategory {
@@ -27,12 +33,14 @@ module.exports = buildSchema(`
         menuCategory: String!
     }
 
-    input CreateOrderInput {
-        items: [String]!
+    input EditMenuItemInput {
+        id: String!
+        price: Float
+        title: String
+        menuCategory: String
     }
 
-    schema {
-        query: Query
-        mutation: Mutation
+    input CreateOrderInput {
+        items: [String]!
     }
 `);
