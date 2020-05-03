@@ -1,12 +1,21 @@
 const { buildSchema } = require('graphql');
 
 module.exports = buildSchema(`
+    type Query {
+        menu: [MenuCategory]!
+    }
+
+    type Mutation {
+        createMenuItem(createItemInput: CreateMenuItemInput): MenuItem
+    }
+
     type MenuCategory {
         title: String!
-        items: [MenuItem!]!
+        items: [MenuItem]!
     }
 
     type MenuItem {
+        id: String!
         title: String!
         price: Float!
     }
@@ -15,14 +24,6 @@ module.exports = buildSchema(`
         title: String!
         price: Float!
         menuCategory: String!
-    }
-
-    type Query {
-        test: String
-    }
-
-    type Mutation {
-        createMenuItem(createItemInput: CreateMenuItemInput): MenuItem
     }
 
     schema {
