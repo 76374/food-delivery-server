@@ -7,7 +7,7 @@ const menuItemToPlainObject = (menuItem) => {
     title: menuItem.title,
     price: menuItem.price
   }
-}
+};
 
 const menuCategoryToPlainObject = (menuCategory) => {
   return {
@@ -16,7 +16,7 @@ const menuCategoryToPlainObject = (menuCategory) => {
     items: menuCategory.items.map(
       (item) => item instanceof MenuItem ? menuItemToPlainObject(item) : item.toString())
   }
-}
+};
 
 const getMenu = async function () {
   const categories = await MenuCategory.find({}).populate('items');

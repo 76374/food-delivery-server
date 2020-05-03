@@ -6,7 +6,8 @@ module.exports = buildSchema(`
     }
 
     type Mutation {
-        createMenuItem(createItemInput: CreateMenuItemInput): MenuItem
+        createMenuItem(input: CreateMenuItemInput): MenuItem
+        createOrder(input: CreateOrderInput): String
     }
 
     type MenuCategory {
@@ -24,6 +25,10 @@ module.exports = buildSchema(`
         title: String!
         price: Float!
         menuCategory: String!
+    }
+
+    input CreateOrderInput {
+        items: [String]!
     }
 
     schema {
