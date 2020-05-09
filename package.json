@@ -4,8 +4,9 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon src/app.js"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
   },
   "repository": {
     "type": "git",
@@ -18,11 +19,15 @@
   },
   "homepage": "https://github.com/alexbolbat/food-delivery-server#readme",
   "dependencies": {
-    "express": "^4.17.1",
-    "express-graphql": "^0.9.0",
     "graphql": "^15.0.0",
+    "graphql-request": "^1.8.2",
     "mongodb": "^3.5.7",
-    "mongoose": "^5.9.11"
+    "mongoose": "^5.9.11",
+    "next": "^9.3.6",
+    "next-connect": "^0.6.6",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "swr": "^0.2.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.3"

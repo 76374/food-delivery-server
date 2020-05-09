@@ -1,7 +1,6 @@
-const mongoose = require('mongoose');
-
 const MenuCategory = require('../mongoose/menuCategory');
 const MenuItem = require('../mongoose/menuItem');
+const connect = require('../mongoose/connect');
 const errors = require('../utils/errors');
 
 const menuItemToPlainObject = (menuItem) => {
@@ -54,11 +53,15 @@ const moveItemToCategory = async function (itemId, categoryTitle) {
 };
 
 const getMenu = async function () {
+  await connect();
+
   const categories = await MenuCategory.find({}).populate('items');
   return categories.map((cat) => menuCategoryToPlainObject(cat));
 };
 
 const createMenuItem = async function (title, price, categoryTitle) {
+  await connect();
+
   const item = new MenuItem({
     title,
     price,
@@ -71,6 +74,8 @@ const createMenuItem = async function (title, price, categoryTitle) {
 };
 
 const editMenuItem = async function (id, title, price, categoryTitle) {
+  await connect();
+
   const item = await MenuItem.findById(id);
   if (!item) {
     throw errors.getUnexpectedArgs('wrong id');

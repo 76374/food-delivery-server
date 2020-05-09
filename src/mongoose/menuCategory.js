@@ -1,13 +1,17 @@
 const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
+const MODEL_NAME = 'MenuCategory';
 
-const schema = new Schema({
-  title: {
-    type: String,
-    required: true,
-  },
-  items: [{ type: Schema.Types.ObjectId, ref: 'MenuItem' }],
-});
-
-module.exports = mongoose.model('MenuCategory', schema);
+module.exports =
+  mongoose.models[MODEL_NAME] ||
+  mongoose.model(
+    MODEL_NAME,
+    new Schema({
+      title: {
+        type: String,
+        required: true,
+      },
+      items: [{ type: Schema.Types.ObjectId, ref: 'MenuItem' }],
+    })
+  );

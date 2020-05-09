@@ -7,6 +7,8 @@ const errors = require('../utils/errors');
 const ObjectId = mongoose.Types.ObjectId;
 
 const createOrder = async function (items) {
+  await connect();
+
   if (!items || !items.length) {
     throw errors.getUnexpectedArgs('no items');
   }
