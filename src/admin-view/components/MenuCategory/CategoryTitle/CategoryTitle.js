@@ -1,7 +1,7 @@
 import React from 'react';
 
 const CategoryTitle = (props) => {
-  return <div>{props.title}</div>;
+  return <div><b>{props.title}</b></div>;
 };
 
 export default CategoryTitle;
