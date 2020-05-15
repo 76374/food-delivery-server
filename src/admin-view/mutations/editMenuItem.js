@@ -2,32 +2,33 @@ import { graphql, commitMutation } from 'react-relay';
 import environment from '../Environment';
 
 const mutation = graphql`
-  mutation createMenuItemMutation($input: CreateMenuItemInput!) {
-    createMenuItem(input: $input) {
+  mutation editMenuItemMutation($input: EditMenuItemInput!) {
+    editMenuItem(input: $input) {
       id
     }
   }
 `;
 
-function createMenuItem(data, onComplete) {
+function editMenuItem(data, onComplete) {
   return commitMutation(environment, {
     mutation,
     variables: {
       input: {
+        id: data.id,
         title: data.title,
         price: data.price,
         menuCategory: data.categoryTitle,
       },
     },
-    onCompleted: store => {
-        if (onComplete) {
-          onComplete();
-        }
+    onCompleted: (store) => {
+      if (onComplete) {
+        onComplete();
+      }
     },
-    onError: e => {
-        alert('Something went wrong');
-    }
+    onError: (e) => {
+      alert('Something happened on the server');
+    },
   });
 }
 
-export default createMenuItem;
+export default editMenuItem;

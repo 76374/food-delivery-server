@@ -10,8 +10,12 @@ module.exports = {
     return await menuModel.createMenuItem(title, price, menuCategory);
   },
   editMenuItem: async function (args, request) {
-    const { id, title, price, menuCategory} = args.input;
+    const { id, title, price, menuCategory } = args.input;
     return await menuModel.editMenuItem(id, title, price, menuCategory);
+  },
+  deleteMenuItem: async function (args, request) {
+    const { id } = args.input;
+    return await menuModel.deleteMenuItem(id);
   },
   createOrder: async function (args, request) {
     return await ordersModel.createOrder(args.input.items);

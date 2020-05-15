@@ -10,6 +10,7 @@ type Query {
 type Mutation {
   createMenuItem(input: CreateMenuItemInput!): MenuItem
   editMenuItem(input: EditMenuItemInput): MenuItem
+  deleteMenuItem(input: DeleteMenuItemInput): Boolean
   createOrder(input: CreateOrderInput!): String
 }
 
@@ -35,6 +36,10 @@ input EditMenuItemInput {
   price: Float
   title: String
   menuCategory: String
+}
+
+input DeleteMenuItemInput {
+  id: String!
 }
 
 input CreateOrderInput {
