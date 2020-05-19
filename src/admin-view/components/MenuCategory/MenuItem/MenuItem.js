@@ -1,5 +1,9 @@
 import React, { useCallback } from 'react';
 import { createFragmentContainer } from 'react-relay';
+import IconButton from '@material-ui/core/IconButton';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
+import Typography from '@material-ui/core/Typography';
 
 const MenuItem = (props) => {
   const { editClicked, deleteClicked, menuItem } = props;
@@ -14,17 +18,21 @@ const MenuItem = (props) => {
   }, [id, deleteClicked]);
 
   return (
-    <div className="container">
-      <div>{title}</div>
-      <div>{price}</div>
-      <button onClick={onEditClicked}>edit</button>
-      <button onClick={onDeleteClicked}>remove</button>
+    <tr>
+      <td><Typography>{title}</Typography></td>
+      <td><Typography>{price}</Typography></td>
+      <td><IconButton onClick={onEditClicked} size="small">
+        <EditIcon/>
+      </IconButton></td>
+      <td><IconButton onClick={onDeleteClicked} size="small">
+        <DeleteIcon/>
+      </IconButton></td>
       <style jsx>{`
         .container {
           display: flex;
         }
       `}</style>
-    </div>
+    </tr>
   );
 };
 

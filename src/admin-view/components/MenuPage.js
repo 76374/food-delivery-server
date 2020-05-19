@@ -16,14 +16,7 @@ const MenuPage = () => {
     <QueryRenderer
       environment={environment}
       query={MenuPageQuery}
-      render={({ error, props }) => {
-        if (error) {
-          return <div>{error.message}</div>;
-        } else if (props) {
-          return <MenuPageLayout menu={props.menu} />;
-        }
-        return <div>Loading</div>;
-      }}
+      render={({ error, props }) => <MenuPageLayout menu={props && props.menu} error={error} />}
     />
   );
 };

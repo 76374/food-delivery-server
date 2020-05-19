@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 8080",
     "build": "next build",
     "start": "next start",
     "relay": "relay-compiler --src ./src --schema ./src/graphql/schema.graphql"
@@ -20,6 +20,9 @@
   },
   "homepage": "https://github.com/alexbolbat/food-delivery-server#readme",
   "dependencies": {
+    "@material-ui/core": "^4.9.14",
+    "@material-ui/icons": "^4.9.1",
+    "@material-ui/styles": "^4.9.14",
     "graphql": "^15.0.0",
     "mongodb": "^3.5.7",
     "mongoose": "^5.9.11",

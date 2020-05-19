@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
 import { createFragmentContainer, graphql } from 'react-relay';
+import Typography from '@material-ui/core/Typography';
+
 import MenuItem from './MenuItem/MenuItem';
-import CategoryTitle from './CategoryTitle/CategoryTitle';
 
 const MenuCategory = (props) => {
   const { menuCategory, editItemClicked, deleteItemClicked } = props;
@@ -32,10 +33,21 @@ const MenuCategory = (props) => {
   );
 
   return (
-    <div>
-      <CategoryTitle title={title} />
+    <>
+      <tr>
+        <td colSpan="4">
+          <hr />
+        </td>
+      </tr>
+      <tr>
+        <td colSpan="4">
+          <Typography variant="h5" align="center">
+            {title}
+          </Typography>
+        </td>
+      </tr>
       {props.menuCategory.items.map((i) => getMenuItem(i))}
-    </div>
+    </>
   );
 };
 
