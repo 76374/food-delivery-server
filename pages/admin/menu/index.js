@@ -1,5 +1,5 @@
 import React from 'react';
-import MenuPage from '../../src/admin-view/components/MenuPage';
+import MenuPage from '../../../src/admin-view/components/MenuPage/MenuPage';
 
 const AdminPage = () => (<MenuPage/>);
 

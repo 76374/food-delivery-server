@@ -3,7 +3,7 @@ const { Environment, Network, RecordSource, Store } = require('relay-runtime');
 const store = new Store(new RecordSource());
 
 const network = Network.create((operation, variables) => {
-  return fetch('api/graphql', {
+  return fetch('../api/graphql', {
     method: 'POST',
     headers: {
       Accept: 'application/json',

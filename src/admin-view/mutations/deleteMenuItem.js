@@ -1,5 +1,5 @@
 import { graphql, commitMutation } from 'react-relay';
-import environment from '../Environment';
+import env from '../Environment';
 
 const mutation = graphql`
   mutation deleteMenuItemMutation($input: DeleteMenuItemInput!) {
@@ -8,7 +8,7 @@ const mutation = graphql`
 `;
 
 function deleteMenuItem(id, onComplete) {
-  return commitMutation(environment, {
+  return commitMutation(env, {
     mutation,
     variables: {
       input: { id },

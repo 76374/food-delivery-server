@@ -7,9 +7,9 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 
 import MenuCategory from './MenuCategory/MenuCategory';
 import EdiMenuItemPanel from './EdiMenuItemPanel/EdiMenuItemPanel';
-import createMenuItem from '../mutations/createMenuItem';
-import editMenuItem from '../mutations/editMenuItem';
-import deleteMenuItem from '../mutations/deleteMenuItem';
+import createMenuItem from '../../mutations/createMenuItem';
+import editMenuItem from '../../mutations/editMenuItem';
+import deleteMenuItem from '../../mutations/deleteMenuItem';
 
 const MenuPageLayout = (props) => {
   const [editMode, setEditMode] = useState(false);

@@ -1,5 +1,5 @@
 import { graphql, commitMutation } from 'react-relay';
-import environment from '../Environment';
+import env from '../Environment';
 
 const mutation = graphql`
   mutation editMenuItemMutation($input: EditMenuItemInput!) {
@@ -10,7 +10,7 @@ const mutation = graphql`
 `;
 
 function editMenuItem(data, onComplete) {
-  return commitMutation(environment, {
+  return commitMutation(env, {
     mutation,
     variables: {
       input: {

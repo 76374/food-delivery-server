@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+const MenuItem = require('./menuItem');
+
 const Schema = mongoose.Schema;
 const MODEL_NAME = 'MenuCategory';
 
@@ -12,6 +14,6 @@ module.exports =
         type: String,
         required: true,
       },
-      items: [{ type: Schema.Types.ObjectId, ref: 'MenuItem' }],
+      items: [{ type: Schema.Types.ObjectId, ref: MenuItem.modelName }],
     })
   );

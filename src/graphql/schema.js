@@ -7,4 +7,6 @@ const getSchema = () => {
   return fs.readFileSync(filePath, 'utf8');
 };
 
-module.exports = buildSchema(getSchema());
+const schema = getSchema();
+
+module.exports = buildSchema(schema);
