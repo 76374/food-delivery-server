@@ -5,8 +5,8 @@ schema {
 
 type Query {
   menu: [MenuCategory]!
+  orders: [Order]!
 }
-
 
 type Mutation {
   createMenuItem(input: CreateMenuItemInput!): MenuItem
@@ -14,7 +14,6 @@ type Mutation {
   deleteMenuItem(input: DeleteMenuItemInput!): Boolean
   createOrder(input: CreateOrderInput!): Order
 }
-
 
 type MenuCategory {
   title: String!
@@ -28,9 +27,16 @@ type MenuItem {
 }
 
 type Order {
-    id: String!
+  id: String!
+  date: String!
+  items: [OrderItem!]!
+  price: Float!
 }
 
+type OrderItem {
+  menuItem: MenuItem!
+  count: Int!
+}
 
 input CreateMenuItemInput {
   title: String!
@@ -50,10 +56,10 @@ input DeleteMenuItemInput {
 }
 
 input CreateOrderInput {
-    items: [OrderInput!]!
+  items: [OrderInput!]!
 }
 
 input OrderInput {
-    itemId: String!
-    itemsCount: Int!
+  itemId: String!
+  itemsCount: Int!
 }

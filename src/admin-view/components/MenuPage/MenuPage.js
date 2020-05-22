@@ -1,6 +1,6 @@
 import React from 'react';
 import { QueryRenderer, graphql } from 'react-relay';
-import menuEnvironment from '../../Environment';
+import env from '../../Environment';
 import MenuPageLayout from './MenuPageLayout';
 
 const MenuPageQuery = graphql`
@@ -14,7 +14,7 @@ const MenuPageQuery = graphql`
 const MenuPage = () => {
   return (
     <QueryRenderer
-      environment={menuEnvironment}
+      environment={env}
       query={MenuPageQuery}
       render={({ error, props }) => <MenuPageLayout menu={props && props.menu} error={error} />}
     />

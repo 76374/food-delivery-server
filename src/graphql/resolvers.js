@@ -2,7 +2,7 @@ const menuModel = require('../model/menu');
 const ordersModel = require('../model/orders');
 
 module.exports = {
-  menu: async function (args, request) {
+  menu: async function (args, context, request) {
     return await menuModel.getMenu();
   },
   createMenuItem: async function (args, request) {
@@ -20,4 +20,7 @@ module.exports = {
   createOrder: async function (args, request) {
     return await ordersModel.createOrder(args.input.items);
   },
+  orders: async function (args, context, request) {
+    return await ordersModel.getOrders();
+  }
 };

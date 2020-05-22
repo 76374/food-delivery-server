@@ -119,4 +119,5 @@ module.exports = {
   createMenuItem,
   editMenuItem,
   deleteMenuItem,
+  menuItemToPlainObject
 };

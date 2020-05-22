@@ -1,20 +1,14 @@
 const { Environment, Network, RecordSource, Store } = require('relay-runtime');
+const axios = require('axios').default;
 
 const store = new Store(new RecordSource());
 
 const network = Network.create((operation, variables) => {
-  return fetch('../api/graphql', {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      query: operation.text,
-      variables,
-    }),
-  }).then((response) => {
-    return response.json();
+  return axios.post('../api/graphql', {
+    query: operation.text,
+    variables,
+  }).then(response => {
+    return response.data;
   });
 });
 

@@ -19,7 +19,6 @@ function deleteMenuItem(id, onComplete) {
       }
     },
     onError: (e) => {
-      console.log(e);
       alert('Something happened on the server');
     },
   });
