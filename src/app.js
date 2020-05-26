@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 const menuRouter = require('./routes/menu');
 const { DB } = require('./consts/path');
@@ -7,7 +8,9 @@ const graphqlHandler = require('./graphql/handler');
 
 const app = express();
 
-app.use('/graphql', graphqlHandler)
+app.use(cors());
+
+app.use('/graphql', graphqlHandler);
 
 app.use(menuRouter);
 

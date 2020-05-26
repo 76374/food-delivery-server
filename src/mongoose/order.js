@@ -1,10 +1,19 @@
 const mongoose = require('mongoose');
 
-const Schema = mongoose.Schema;
+const MenuItem = require('./menuItem');
 
-const schema = new Schema({
-  items: [{ type: Schema.Types.ObjectId, ref: 'MenuItem' }],
-  date: String
+const Schema = mongoose.Schema;
+const MODEL_NAME = 'Order';
+
+const itemSchema = new Schema({
+  menuItem: { type: Schema.Types.ObjectId, ref: MenuItem.modelName },
+  count: Number,
 });
 
-module.exports = mongoose.model('Order', schema);
+const orderSchema = new Schema({
+  items: { type: [itemSchema], required: true },
+  date: { type: String, required: true },
+  price: { type: Number, required: true },
+});
+
+module.exports = mongoose.models[MODEL_NAME] || mongoose.model(MODEL_NAME, orderSchema);

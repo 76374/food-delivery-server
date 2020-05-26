@@ -1,0 +1,92 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+  menu: [MenuCategory]!
+  orders: [Order]!
+}
+
+type Mutation {
+  createMenuItem(input: CreateMenuItemInput!): MenuItem
+  editMenuItem(input: EditMenuItemInput!): MenuItem
+  deleteMenuItem(input: DeleteMenuItemInput!): Boolean
+  createOrder(input: CreateOrderInput!): Order
+  signIn(input: SignInInput!): AuthData
+  signUp(input: SignUpInput!): AuthData
+}
+
+type MenuCategory {
+  title: String!
+  items: [MenuItem]!
+}
+
+type MenuItem {
+  id: String!
+  title: String!
+  price: Float!
+}
+
+type Order {
+  id: String!
+  date: String!
+  items: [OrderItem!]!
+  price: Float!
+}
+
+type OrderItem {
+  menuItem: MenuItem!
+  count: Int!
+}
+
+type AuthData {
+  token: String!
+  user: User!
+}
+
+type User {
+  id: String!
+  firstName: String!
+  lastName: String!
+  email: String!
+}
+
+
+input CreateMenuItemInput {
+  title: String!
+  price: Float!
+  menuCategory: String!
+}
+
+input EditMenuItemInput {
+  id: String!
+  price: Float
+  title: String
+  menuCategory: String
+}
+
+input DeleteMenuItemInput {
+  id: String!
+}
+
+input CreateOrderInput {
+  items: [OrderInput!]!
+}
+
+input OrderInput {
+  itemId: String!
+  itemsCount: Int!
+}
+
+input SignUpInput {
+  email: String!
+  firstName: String!
+  lastName: String!
+  pwd: String!
+}
+
+input SignInInput {
+  email: String!
+  pwd: String!
+}

@@ -1,26 +1,8 @@
-const mongoose = require('mongoose');
-
 const MenuCategory = require('../mongoose/menuCategory');
 const MenuItem = require('../mongoose/menuItem');
+const connect = require('../mongoose/connect');
 const errors = require('../utils/errors');
-
-const menuItemToPlainObject = (menuItem) => {
-  return {
-    id: menuItem._id.toString(),
-    title: menuItem.title,
-    price: menuItem.price,
-  };
-};
-
-const menuCategoryToPlainObject = (menuCategory) => {
-  return {
-    id: menuCategory._id.toString(),
-    title: menuCategory.title,
-    items: menuCategory.items.map((item) =>
-      item instanceof MenuItem ? menuItemToPlainObject(item) : item.toString()
-    ),
-  };
-};
+const { modelToPlainObject } = require('./util');
 
 const addItemToCategory = async function (itemId, categoryTitle) {
   let category = await MenuCategory.findOne({ title: categoryTitle });
@@ -35,6 +17,15 @@ const addItemToCategory = async function (itemId, categoryTitle) {
   await category.save();
 };
 
+const deleteItemFromCategory = async function (category, itemId) {
+  if (category.items.length <= 1) {
+    await MenuCategory.remove(category);
+  } else {
+    category.items = category.items.filter((i) => !itemId.equals(i));
+    await category.save();
+  }
+};
+
 const moveItemToCategory = async function (itemId, categoryTitle) {
   const currentCategory = await MenuCategory.findOne({ items: itemId });
   if (currentCategory) {
@@ -42,23 +33,22 @@ const moveItemToCategory = async function (itemId, categoryTitle) {
       // the item is already there
       return false;
     }
-    if (currentCategory.items.length <= 1) {
-      await MenuCategory.remove(currentCategory);
-    } else {
-      currentCategory.items = currentCategory.items.filter((i) => !itemId.equals(i));
-      await currentCategory.save();
-    }
+    await deleteItemFromCategory(currentCategory, itemId);
   }
-  addItemToCategory(itemId, categoryTitle);
+  await addItemToCategory(itemId, categoryTitle);
   return true;
 };
 
 const getMenu = async function () {
+  await connect();
+
   const categories = await MenuCategory.find({}).populate('items');
-  return categories.map((cat) => menuCategoryToPlainObject(cat));
+  return categories.map(cat => modelToPlainObject(cat, 'items'))
 };
 
 const createMenuItem = async function (title, price, categoryTitle) {
+  await connect();
+
   const item = new MenuItem({
     title,
     price,
@@ -71,6 +61,8 @@ const createMenuItem = async function (title, price, categoryTitle) {
 };
 
 const editMenuItem = async function (id, title, price, categoryTitle) {
+  await connect();
+
   const item = await MenuItem.findById(id);
   if (!item) {
     throw errors.getUnexpectedArgs('wrong id');
@@ -90,8 +82,24 @@ const editMenuItem = async function (id, title, price, categoryTitle) {
   return { ...item._doc, id: item._id.toString() };
 };
 
+const deleteMenuItem = async function (id) {
+  await connect();
+
+  const item = await MenuItem.findByIdAndRemove(id).exec();
+  if (!item) {
+    return false;
+  }
+
+  const category = await MenuCategory.findOne({ items: item._id });
+  if (category) {
+    await deleteItemFromCategory(category, item._id);
+  }
+  return true;
+};
+
 module.exports = {
   getMenu,
   createMenuItem,
   editMenuItem,
+  deleteMenuItem
 };

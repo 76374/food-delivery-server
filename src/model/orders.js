@@ -1,29 +1,55 @@
-const mongoose = require('mongoose');
-
 const Order = require('../mongoose/order');
 const MenuItem = require('../mongoose/menuItem');
+const connect = require('../mongoose/connect');
 const errors = require('../utils/errors');
-
-const ObjectId = mongoose.Types.ObjectId;
+const { modelToPlainObject } = require('./util');
 
 const createOrder = async function (items) {
+  await connect();
+
   if (!items || !items.length) {
     throw errors.getUnexpectedArgs('no items');
   }
+  items.forEach((i) => {
+    i.count = Math.trunc(i.count);
+    if (i.count <= 0) {
+      throw errors.getUnexpectedArgs('wrong items count');
+    }
+  });
 
-  const menuItems = await MenuItem.find({ _id: { $in: items } }).exec();
+  const ids = items.map((i) => i.itemId);
+  const menuItems = await MenuItem.find({ _id: { $in: ids } }).exec();
   if (menuItems.length !== items.length) {
     throw errors.getUnexpectedArgs('wrong id(s)');
   }
 
+  let orderPrice = 0;
   const order = new Order({
-    items: items.map((i) => ObjectId(i)),
+    items: menuItems.map((menuItem) => {
+      const menuItemId = menuItem._id.toString();
+      const itemsCount = items.find((i) => i.itemId === menuItemId).itemsCount;
+      orderPrice += menuItem.price * itemsCount;
+      return {
+        menuItem: menuItem._id,
+        count: itemsCount,
+      };
+    }),
     date: new Date(),
+    price: orderPrice
   });
   await order.save();
-  return order._id.toString();
+
+  return { ...order.doc, id: order._id };
+};
+
+const getOrders = async function () {
+  await connect();
+
+  const orders = await Order.find({}).populate('items.menuItem');
+  return orders.map((o) => modelToPlainObject(o));
 };
 
 module.exports = {
   createOrder,
+  getOrders,
 };
