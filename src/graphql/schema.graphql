@@ -13,6 +13,8 @@ type Mutation {
   editMenuItem(input: EditMenuItemInput!): MenuItem
   deleteMenuItem(input: DeleteMenuItemInput!): Boolean
   createOrder(input: CreateOrderInput!): Order
+  signIn(input: SignInInput!): AuthData
+  signUp(input: SignUpInput!): AuthData
 }
 
 type MenuCategory {
@@ -38,6 +40,19 @@ type OrderItem {
   count: Int!
 }
 
+type AuthData {
+  token: String!
+  user: User!
+}
+
+type User {
+  id: String!
+  firstName: String!
+  lastName: String!
+  email: String!
+}
+
+
 input CreateMenuItemInput {
   title: String!
   price: Float!
@@ -62,4 +77,16 @@ input CreateOrderInput {
 input OrderInput {
   itemId: String!
   itemsCount: Int!
+}
+
+input SignUpInput {
+  email: String!
+  firstName: String!
+  lastName: String!
+  pwd: String!
+}
+
+input SignInInput {
+  email: String!
+  pwd: String!
 }

@@ -10,10 +10,7 @@ module.exports =
   mongoose.model(
     MODEL_NAME,
     new Schema({
-      title: {
-        type: String,
-        required: true,
-      },
+      title: { type: String, required: true },
       items: [{ type: Schema.Types.ObjectId, ref: MenuItem.modelName }],
     })
   );

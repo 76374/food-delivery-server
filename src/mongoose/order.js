@@ -11,9 +11,9 @@ const itemSchema = new Schema({
 });
 
 const orderSchema = new Schema({
-  items: [itemSchema],
-  date: String,
-  price: Number
+  items: { type: [itemSchema], required: true },
+  date: { type: String, required: true },
+  price: { type: Number, required: true },
 });
 
 module.exports = mongoose.models[MODEL_NAME] || mongoose.model(MODEL_NAME, orderSchema);

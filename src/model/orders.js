@@ -1,26 +1,8 @@
-const mongoose = require('mongoose');
-
 const Order = require('../mongoose/order');
 const MenuItem = require('../mongoose/menuItem');
 const connect = require('../mongoose/connect');
 const errors = require('../utils/errors');
-const { menuItemToPlainObject } = require('./menu');
-
-
-const orderItemToPlainObject = (orderItem) => ({
-  id: orderItem._id.toString(),
-  menuItem: menuItemToPlainObject(orderItem.menuItem),
-  count: orderItem.count,
-});
-
-const orderToPlainObject = (order) => {
-  return {
-    id: order._id.toString(),
-    items: order.items.map((i) => orderItemToPlainObject(i)),
-    date: order.date,
-    price: order.price
-  };
-};
+const { modelToPlainObject } = require('./util');
 
 const createOrder = async function (items) {
   await connect();
@@ -64,7 +46,7 @@ const getOrders = async function () {
   await connect();
 
   const orders = await Order.find({}).populate('items.menuItem');
-  return orders.map((o) => orderToPlainObject(o));
+  return orders.map((o) => modelToPlainObject(o));
 };
 
 module.exports = {

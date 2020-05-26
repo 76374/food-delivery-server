@@ -8,13 +8,7 @@ module.exports =
   mongoose.model(
     MODEL_NAME,
     new Schema({
-      title: {
-        type: String,
-        required: true,
-      },
-      price: {
-        type: Number,
-        required: true,
-      },
+      title: { type: String, required: true },
+      price: { type: Number, required: true },
     })
   );

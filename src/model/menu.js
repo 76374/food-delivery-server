@@ -2,24 +2,7 @@ const MenuCategory = require('../mongoose/menuCategory');
 const MenuItem = require('../mongoose/menuItem');
 const connect = require('../mongoose/connect');
 const errors = require('../utils/errors');
-
-const menuItemToPlainObject = (menuItem) => {
-  return {
-    id: menuItem._id.toString(),
-    title: menuItem.title,
-    price: menuItem.price,
-  };
-};
-
-const menuCategoryToPlainObject = (menuCategory) => {
-  return {
-    id: menuCategory._id.toString(),
-    title: menuCategory.title,
-    items: menuCategory.items.map((item) =>
-      item instanceof MenuItem ? menuItemToPlainObject(item) : item.toString()
-    ),
-  };
-};
+const { modelToPlainObject } = require('./util');
 
 const addItemToCategory = async function (itemId, categoryTitle) {
   let category = await MenuCategory.findOne({ title: categoryTitle });
@@ -60,7 +43,7 @@ const getMenu = async function () {
   await connect();
 
   const categories = await MenuCategory.find({}).populate('items');
-  return categories.map((cat) => menuCategoryToPlainObject(cat));
+  return categories.map(cat => modelToPlainObject(cat, 'items'))
 };
 
 const createMenuItem = async function (title, price, categoryTitle) {
@@ -118,6 +101,5 @@ module.exports = {
   getMenu,
   createMenuItem,
   editMenuItem,
-  deleteMenuItem,
-  menuItemToPlainObject
+  deleteMenuItem
 };

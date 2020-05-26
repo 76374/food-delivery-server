@@ -6,7 +6,10 @@ const getError = (message, httpCode) => {
 
 const getUnexpectedArgs = (message) => (getError(message || 'Unexpected arguments', 422));
 
+const getUnauthorized = (message) => (getError(message || 'Unauthorized', 401));
+
 module.exports = {
-    getUnexpectedArgs
+    getUnexpectedArgs,
+    getUnauthorized
 }
 
