@@ -1,30 +1,35 @@
 const Order = require('../mongoose/order');
 const MenuItem = require('../mongoose/menuItem');
+const User = require('../mongoose/user');
 const connect = require('../mongoose/connect');
-const errors = require('../utils/errors');
+const { getUnexpectedArgs } = require('../utils/errors');
 const { modelToPlainObject } = require('./util');
 
-const createOrder = async function (items) {
+const createOrder = async function (items, userId) {
   await connect();
+  const user = await User.findById(userId);
+  if (!user) {
+    throw getUnexpectedArgs('User not found');
+  }
 
   if (!items || !items.length) {
-    throw errors.getUnexpectedArgs('no items');
+    throw getUnexpectedArgs('no items');
   }
   items.forEach((i) => {
     i.count = Math.trunc(i.count);
     if (i.count <= 0) {
-      throw errors.getUnexpectedArgs('wrong items count');
+      throw getUnexpectedArgs('wrong items count');
     }
   });
-
   const ids = items.map((i) => i.itemId);
   const menuItems = await MenuItem.find({ _id: { $in: ids } }).exec();
   if (menuItems.length !== items.length) {
-    throw errors.getUnexpectedArgs('wrong id(s)');
+    throw getUnexpectedArgs('wrong id(s)');
   }
 
   let orderPrice = 0;
   const order = new Order({
+    //TODO: mafe forEach as it has side effects
     items: menuItems.map((menuItem) => {
       const menuItemId = menuItem._id.toString();
       const itemsCount = items.find((i) => i.itemId === menuItemId).itemsCount;
@@ -35,7 +40,8 @@ const createOrder = async function (items) {
       };
     }),
     date: new Date(),
-    price: orderPrice
+    price: orderPrice,
+    owner: user._id
   });
   await order.save();
 
