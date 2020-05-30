@@ -1,7 +1,8 @@
 const MenuCategory = require('../mongoose/menuCategory');
 const MenuItem = require('../mongoose/menuItem');
 const connect = require('../mongoose/connect');
-const errors = require('../utils/errors');
+const { itemNotFound } = require('../consts/errors');
+const getError = require('../utils/getError');
 const { modelToPlainObject } = require('./util');
 
 const addItemToCategory = async function (itemId, categoryTitle) {
@@ -65,7 +66,7 @@ const editMenuItem = async function (id, title, price, categoryTitle) {
 
   const item = await MenuItem.findById(id);
   if (!item) {
-    throw errors.getUnexpectedArgs('wrong id');
+    throw getError(itemNotFound);
   }
 
   if (title) {

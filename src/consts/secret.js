@@ -1,3 +1,3 @@
 module.exports = {
-    AUTH: 'Bept0Jle:t'
+    Auth: 'Bept0Jle:t'
 }
