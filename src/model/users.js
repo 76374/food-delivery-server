@@ -7,6 +7,7 @@ const { userExists, authorizationFailed, unauthorized } = require('../consts/err
 const getError = require('../utils/getError');
 const { Auth } = require('../consts/secret');
 const { modelToPlainObject } = require('./util');
+const validator = require('./validator');
 
 const verify = util.promisify(jwt.verify);
 const sign = util.promisify(jwt.sign);
@@ -21,10 +22,16 @@ const getAuthData = async function (user) {
 };
 
 const signUp = async function (firstName, lastName, email, pwd) {
+  validator.validateFirstName(firstName);
+  validator.validateLastName(lastName);
+  validator.validateEmail(email);
+  validator.validatePwd(pwd);
+
   let user = await User.findOne({ email: email }).exec();
   if (user) {
     throw getError(userExists);
   }
+
   const pwdHash = await bcrypt.hash(pwd, 12);
   user = new User({
     firstName: firstName,
@@ -38,6 +45,9 @@ const signUp = async function (firstName, lastName, email, pwd) {
 };
 
 const signIn = async function (email, pwd) {
+  validator.validateEmail(email);
+  validator.validatePwd(pwd);
+
   const user = await User.findOne({ email: email }).exec();
   if (!user) {
     throw getError(authorizationFailed);

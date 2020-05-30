@@ -3,15 +3,15 @@ exports.userExists = {
   key: 'user_exists',
   code: 401,
 };
-exports.authorizationFailed = {
-  message: 'Authorization failed',
-  key: 'authorization_failed',
-  code: 401,
-};
 exports.unauthorized = {
   message: 'Not authorized',
   key: 'unauthorized',
   code: 401,
+};
+exports.validationFailed = {
+  message: 'Validation failed',
+  key: 'validation_failed',
+  code: 422,
 };
 exports.itemNotFound = {
   message: 'Item not found',
@@ -24,8 +24,12 @@ exports.wrongItemsCount = {
   code: 422,
 };
 exports.userNotFound = {
-    message: 'User not found',
-    key: 'user_not_found',
-    code: 422,
-  };
-
+  message: 'User not found',
+  key: 'user_not_found',
+  code: 422,
+};
+exports.getValidationFailed = (field, param, value) => ({
+  message: `validation failed (${field} ${param} ${value})`,
+  key: `validation_failed_${field}_${param}`,
+  code: 422,
+})
