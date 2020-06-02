@@ -32,4 +32,9 @@ exports.getValidationFailed = (field, param, value) => ({
   message: `validation failed (${field} ${param} ${value})`,
   key: `validation_failed_${field}_${param}`,
   code: 422,
-})
+});
+exports.invalidDateFormat = {
+  message: 'Invalid date format',
+  key: 'invalid_date_format',
+  code: 422
+}

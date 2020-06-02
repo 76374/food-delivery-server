@@ -13,7 +13,7 @@ const itemSchema = new Schema({
 
 const orderSchema = new Schema({
   items: { type: [itemSchema], required: true },
-  date: { type: String, required: true },
+  date: { type: Date, required: true },
   price: { type: Number, required: true },
   owner: { type: Schema.Types.ObjectId, ref: User.modelName, required: true }
 });

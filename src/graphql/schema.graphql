@@ -9,13 +9,17 @@ type Query {
 }
 
 type Mutation {
-  createMenuItem(input: CreateMenuItemInput!): MenuItem
-  editMenuItem(input: EditMenuItemInput!): MenuItem
-  deleteMenuItem(input: DeleteMenuItemInput!): Boolean
+  createMenuItem(menuItem: MenuItemInput!): MenuItem
+  editMenuItem(id: String!, menuItem: MenuItemInput!): MenuItem
+  deleteMenuItem(id: String!): Boolean
+  setSchedule(items:[String!]!, date: Date!): String
+
   createOrder(input: CreateOrderInput!): Order
   signIn(input: SignInInput!): AuthData
   signUp(input: SignUpInput!): AuthData
 }
+
+scalar Date
 
 type MenuCategory {
   title: String!
@@ -52,22 +56,10 @@ type User {
   email: String!
 }
 
-
-input CreateMenuItemInput {
+input MenuItemInput {
   title: String!
   price: Float!
   menuCategory: String!
-}
-
-input EditMenuItemInput {
-  id: String!
-  price: Float
-  title: String
-  menuCategory: String
-}
-
-input DeleteMenuItemInput {
-  id: String!
 }
 
 input CreateOrderInput {

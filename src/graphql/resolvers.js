@@ -1,23 +1,26 @@
+const { GraphQLDate } = require('graphql-iso-date');
+
 const menuModel = require('../model/menu');
 const ordersModel = require('../model/orders');
 const usersModel = require('../model/users');
+const menuSchedule = require('../model/menuSchedule');
 const { getToken } = require('../utils/requestUtil');
 
 module.exports = {
+  Date: GraphQLDate,
   menu: async function (args, request) {
     return await menuModel.getMenu();
   },
   createMenuItem: async function (args, request) {
-    const { title, price, menuCategory } = args.input;
+    const { title, price, menuCategory } = args.menuItem;
     return await menuModel.createMenuItem(title, price, menuCategory);
   },
   editMenuItem: async function (args, request) {
-    const { id, title, price, menuCategory } = args.input;
-    return await menuModel.editMenuItem(id, title, price, menuCategory);
+    const { title, price, menuCategory } = args.menuItem;
+    return await menuModel.editMenuItem(args.id, title, price, menuCategory);
   },
   deleteMenuItem: async function (args, request) {
-    const { id } = args.input;
-    return await menuModel.deleteMenuItem(id);
+    return await menuModel.deleteMenuItem(args.id);
   },
   createOrder: async function (args, request) {
     const userId = await usersModel.checkAutorization(getToken(request));
@@ -34,5 +37,9 @@ module.exports = {
   signUp: async function (args, request) {
     const { firstName, lastName, email, pwd } = args.input;
     return await usersModel.signUp(firstName, lastName, email, pwd);
-  }
+  },
+  setSchedule: async function (args, request) {
+    const { items, date } = args;
+    return await menuSchedule.setSchedule(items, date);
+  },
 };
