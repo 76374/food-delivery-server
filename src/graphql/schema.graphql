@@ -6,6 +6,7 @@ schema {
 type Query {
   menu: [MenuCategory]!
   orders: [Order]!
+  getSchedule(date: Date): MenuSchedule
 }
 
 type Mutation {
@@ -54,6 +55,12 @@ type User {
   firstName: String!
   lastName: String!
   email: String!
+}
+
+type MenuSchedule {
+  id: String!
+  items: [MenuItem]!
+  date: Date
 }
 
 input MenuItemInput {

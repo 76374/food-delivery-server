@@ -1,5 +1,3 @@
-const { GraphQLDate } = require('graphql-iso-date');
-
 const menuModel = require('../model/menu');
 const ordersModel = require('../model/orders');
 const usersModel = require('../model/users');
@@ -7,7 +5,6 @@ const menuSchedule = require('../model/menuSchedule');
 const { getToken } = require('../utils/requestUtil');
 
 module.exports = {
-  Date: GraphQLDate,
   menu: async function (args, request) {
     return await menuModel.getMenu();
   },
@@ -42,4 +39,8 @@ module.exports = {
     const { items, date } = args;
     return await menuSchedule.setSchedule(items, date);
   },
+  getSchedule: async function (args, requst) {
+    const { date } = args;
+    return await menuSchedule.getSchedule(date);
+  }
 };
