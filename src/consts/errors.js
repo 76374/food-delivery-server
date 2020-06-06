@@ -37,4 +37,19 @@ exports.invalidDateFormat = {
   message: 'Invalid date format',
   key: 'invalid_date_format',
   code: 422
+},
+exports.categoryNotFound = {
+  message: 'Category not found',
+  key: 'category_not_found',
+  code: 422
+},
+exports.getMissingArg = (argName) => ({
+  message: 'Missing argument: ' + argName,
+  key: 'missing_argument_' + argName,
+  code: 422
+}),
+exports.categoryNotEmpty = {
+  message: 'Category is not empty, delete items in it first',
+  key: 'category_not_empty',
+  code: 422
 }

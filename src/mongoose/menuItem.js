@@ -10,5 +10,6 @@ module.exports =
     new Schema({
       title: { type: String, required: true },
       price: { type: Number, required: true },
+      category: { type: Schema.Types.ObjectId, ref: 'MenuCategory' },
     })
   );

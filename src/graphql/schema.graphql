@@ -6,23 +6,29 @@ schema {
 type Query {
   menu: [MenuCategory]!
   orders: [Order]!
-  getSchedule(date: Date): MenuSchedule
+  menuSchedule(date: Date!): MenuSchedule
 }
 
 type Mutation {
-  createMenuItem(menuItem: MenuItemInput!): MenuItem
-  editMenuItem(id: String!, menuItem: MenuItemInput!): MenuItem
-  deleteMenuItem(id: String!): Boolean
-  setSchedule(items:[String!]!, date: Date!): String
-
   createOrder(input: CreateOrderInput!): Order
   signIn(input: SignInInput!): AuthData
   signUp(input: SignUpInput!): AuthData
+
+  createMenuCategory(title: String!): MenuCategory
+  editMenuCategory(id: String!, title: String!): MenuCategory
+  deleteMenuCategory(id: String!): Void
+  createMenuItem(menuItem: MenuItemInput!): MenuItem
+  editMenuItem(id: String!, menuItem: MenuItemInput!): MenuItem
+  deleteMenuItem(id: String!): Void
+
+  setSchedule(items:[String!]!, date: Date!): String
 }
 
 scalar Date
+scalar Void
 
 type MenuCategory {
+  id: String!
   title: String!
   items: [MenuItem]!
 }

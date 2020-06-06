@@ -8,6 +8,15 @@ module.exports = {
   menu: async function (args, request) {
     return await menuModel.getMenu();
   },
+  createMenuCategory: async function (args, request) {
+    return await menuModel.createMenuCategory(args.title);
+  },
+  editMenuCategory: async function (args, request) {
+    return await menuModel.editMenuCategory(args.id, args.title);
+  },
+  deleteMenuCategory: async function (args, request) {
+    return await menuModel.deleteMenuCategory(args.id);
+  },
   createMenuItem: async function (args, request) {
     const { title, price, menuCategory } = args.menuItem;
     return await menuModel.createMenuItem(title, price, menuCategory);
@@ -17,7 +26,8 @@ module.exports = {
     return await menuModel.editMenuItem(args.id, title, price, menuCategory);
   },
   deleteMenuItem: async function (args, request) {
-    return await menuModel.deleteMenuItem(args.id);
+    await menuModel.deleteMenuItem(args.id);
+    return null;
   },
   createOrder: async function (args, request) {
     const userId = await usersModel.checkAutorization(getToken(request));

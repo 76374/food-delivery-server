@@ -1,6 +1,6 @@
 const validator = require('../utils/validator');
 const getError = require('../utils/getError');
-const { getValidationFailed } = require('../consts/errors');
+const { getValidationFailed, getMissingArg } = require('../consts/errors');
 
 const MIN_NAME_LENGTH = 2;
 const MAX_NAME_LENGTH = 16;
@@ -34,4 +34,15 @@ exports.validatePwd = (value) => {
   if (!validator.checkLength(value, MIN_PWD_LENGTH, MAX_PWD_LENGTH)) {
     throw getError(getValidationFailed('pwd', 'length', MIN_PWD_LENGTH + '-' + MAX_PWD_LENGTH));
   }
+};
+
+const validateArg = (value, argName) => {
+  if (value === null || value === undefined) {
+    throw getError(getMissingArg(argName));
+  }
+};
+exports.validateArgs = (args) => {
+  Object.keys(args).forEach((key) => {
+    validateArg(args[key], key);
+  });
 };

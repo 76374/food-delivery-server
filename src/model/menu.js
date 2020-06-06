@@ -1,67 +1,83 @@
 const MenuCategory = require('../mongoose/menuCategory');
 const MenuItem = require('../mongoose/menuItem');
 const connect = require('../mongoose/connect');
-const { itemNotFound } = require('../consts/errors');
+const { itemNotFound, categoryNotFound, categoryNotEmpty } = require('../consts/errors');
 const getError = require('../utils/getError');
 const { modelToPlainObject } = require('./util');
-
-const addItemToCategory = async function (itemId, categoryTitle) {
-  let category = await MenuCategory.findOne({ title: categoryTitle });
-  if (category) {
-    category.items.push(itemId);
-  } else {
-    category = new MenuCategory({
-      title: categoryTitle,
-      items: [itemId],
-    });
-  }
-  await category.save();
-};
-
-const deleteItemFromCategory = async function (category, itemId) {
-  if (category.items.length <= 1) {
-    await MenuCategory.remove(category);
-  } else {
-    category.items = category.items.filter((i) => !itemId.equals(i));
-    await category.save();
-  }
-};
-
-const moveItemToCategory = async function (itemId, categoryTitle) {
-  const currentCategory = await MenuCategory.findOne({ items: itemId });
-  if (currentCategory) {
-    if (currentCategory.title === categoryTitle) {
-      // the item is already there
-      return false;
-    }
-    await deleteItemFromCategory(currentCategory, itemId);
-  }
-  await addItemToCategory(itemId, categoryTitle);
-  return true;
-};
+const { validateArgs } = require('./validator');
 
 const getMenu = async function () {
   await connect();
 
   const categories = await MenuCategory.find({}).populate('items');
-  return categories.map(cat => modelToPlainObject(cat, 'items'))
+  return categories.map((cat) => modelToPlainObject(cat, 'items'));
 };
 
-const createMenuItem = async function (title, price, categoryTitle) {
+const createMenuCategory = async function (title) {
+  validateArgs({ title });
+
+  const category = new MenuCategory({
+    title,
+    items: []
+  });
+  await category.save();
+
+  return modelToPlainObject(category);
+};
+
+const editMenuCategory = async function (id, title) {
+  validateArgs({ id, title });
+
+  const category = await MenuCategory.findById(id).exec(); 
+  if (!category) {
+    throw getError(categoryNotFound);
+  }
+  category.title = title;
+  await category.save();
+
+  return modelToPlainObject(category);
+}
+
+const deleteMenuCategory = async function (id) {
+  validateArgs({ id });
+
+  const category = await MenuCategory.findById(id).exec();
+  if (!category) {
+    throw getError(categoryNotFound);
+  }
+  if (category.items.length > 0) {
+    throw getError(categoryNotEmpty);
+  }
+  await MenuCategory.deleteOne({_id: category._id}).exec();
+}
+
+const createMenuItem = async function (title, price, categoryId) {
+  validateArgs({ title, price, categoryId });
+
   await connect();
+
+  const category = await MenuCategory.findById(categoryId).exec();
+  if (!category) {
+    throw getError(categoryNotFound);
+  }
 
   const item = new MenuItem({
     title,
     price,
+    category: category._id,
   });
-  const createdItem = await item.save();
 
-  await addItemToCategory(createdItem._id, categoryTitle);
+  category.items.push(item._id);
 
-  return { ...createdItem._doc, id: createdItem._id.toString() };
+  await item.save();
+  await category.save();
+
+  return modelToPlainObject(item);
 };
 
-const editMenuItem = async function (id, title, price, categoryTitle) {
+const editMenuItem = async function (id, title, price, categoryId) {
+  validateArgs({ id, title, price, categoryId });
+
   await connect();
 
   const item = await MenuItem.findById(id);
@@ -75,8 +91,19 @@ const editMenuItem = async function (id, title, price, categoryTitle) {
   if (price || price === 0) {
     item.price = price;
   }
-  if (categoryTitle) {
-    moveItemToCategory(item._id, categoryTitle);
+  if (categoryId && item.category.toString() !== categoryId) {
+    const newCategory = await MenuCategory.findById(categoryId).exec();
+    if (!newCategory) {
+      throw getError(categoryNotFound);
+    }
+    newCategory.items.push(item._id);
+    await newCategory.save();
+
+    const oldCategory = await MenuCategory.findById(item.category).exec();
+    if (oldCategory) {
+      oldCategory.items = oldCategory.items.filter((i) => !i._id.equals(item._id));
+      await oldCategory.save();
+    }
   }
 
   await item.save();
@@ -84,23 +111,28 @@ const editMenuItem = async function (id, title, price, categoryTitle) {
 };
 
 const deleteMenuItem = async function (id) {
+  validateArgs({ id });
+
   await connect();
 
   const item = await MenuItem.findByIdAndRemove(id).exec();
   if (!item) {
-    return false;
+    throw getError(itemNotFound);
   }
 
-  const category = await MenuCategory.findOne({ items: item._id });
+  const category = await MenuCategory.findById(item.category).exec();
   if (category) {
-    await deleteItemFromCategory(category, item._id);
+    category.items = category.items.filter((i) => !i._id.equals(item._id));
+    await category.save();
   }
-  return true;
 };
 
 module.exports = {
   getMenu,
+  createMenuCategory,
+  editMenuCategory,
+  deleteMenuCategory,
   createMenuItem,
   editMenuItem,
-  deleteMenuItem
+  deleteMenuItem,
 };
