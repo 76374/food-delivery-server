@@ -1,16 +1,13 @@
 const mongoose = require('mongoose');
 
-const MenuItem = require('./menuItem');
-
-const MODEL_NAME = 'MenuSchedule';
 const Schema = mongoose.Schema;
-
+const modelName = 'MenuSchedule';
 module.exports =
-  mongoose.models[MODEL_NAME] ||
+  mongoose.models[modelName] ||
   mongoose.model(
-    MODEL_NAME,
+    modelName,
     new Schema({
       date: Date,
-      items: [{ type: Schema.Types.ObjectId, ref: MenuItem.modelName }],
+      categories: [{ type: Schema.Types.ObjectId, ref: 'ScheduleCategory' }],
     })
   );

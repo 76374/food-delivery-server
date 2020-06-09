@@ -3,6 +3,7 @@ const getError = require('../utils/getError');
 const connect = require('../mongoose/connect');
 const MenuSchedule = require('../mongoose/menuSchedule');
 const MenuItem = require('../mongoose/menuItem');
+const ScheduleCategory = require('../mongoose/sheduleCategory');
 const { modelToPlainObject } = require('./util');
 
 const parseDate = (date) => {
@@ -11,7 +12,7 @@ const parseDate = (date) => {
     throw getError(invalidDateFormat);
   }
   return new Date(Date.UTC(parsedDate.getFullYear(), parsedDate.getMonth(), parsedDate.getDate()));
-}
+};
 
 const setSchedule = async function (items, date) {
   if (!items || !items.length) {
@@ -25,17 +26,35 @@ const setSchedule = async function (items, date) {
   if (menuItems.length !== items.length) {
     throw getError(itemNotFound);
   }
-  const ids = menuItems.map((i) => i._id);
 
   let menuSchedule = await MenuSchedule.findOne({ date }).exec();
-  if (menuSchedule) {
-    menuSchedule.items = ids;
-  } else {
+  if (!menuSchedule) {
     menuSchedule = new MenuSchedule({
-      items: ids,
+      categories: [],
       date,
     });
   }
+
+  const containsId = (arr, id) => arr.find((el) => el.equals(id));
+  const categories = [];
+  menuItems.forEach((menuItem) => {
+    if (!containsId(categories, menuItem.category)) {
+      categories.push(menuItem.category);
+    }
+  });
+  console.log(categories);
+  const sheduleCategories = categories.map(
+    (category) =>
+      new ScheduleCategory({
+        schedule: menuSchedule,
+        category: category,
+        items: menuItems.filter((i) => i.category.equals(category)).map((i) => i._id),
+      })
+  );
+  for (let sc of sheduleCategories) {
+    await sc.save();
+  }
+
   await menuSchedule.save();
 
   return menuSchedule._id.toString();
@@ -43,15 +62,25 @@ const setSchedule = async function (items, date) {
 
 const getSchedule = async function (date) {
   date = parseDate(date);
-
   await connect();
 
-  const menuSchedule = await MenuSchedule.findOne({ date }).populate('items');
-
-  return menuSchedule ? modelToPlainObject(menuSchedule, 'items') : null;
-}
+  const menuSchedule = await MenuSchedule.findOne({ date })
+    .populate('categories')
+    .populate({ path: 'categories', populate: { path: 'items' } })
+    .populate({ path: 'categories', populate: { path: 'category' } });
+  if (!menuSchedule) {
+    return null;
+  }
+  const result = modelToPlainObject(menuSchedule, 'categories');
+  result.categories.forEach((c) => {
+    c.items.map((i) => modelToPlainObject(i));
+    c.category = modelToPlainObject(c.category);
+  });
+  console.log(result);
+  return result;
+};
 
 module.exports = {
   setSchedule,
-  getSchedule
+  getSchedule,
 };

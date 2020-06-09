@@ -65,8 +65,15 @@ type User {
 
 type MenuSchedule {
   id: String!
-  items: [MenuItem]!
+  categories: [ScheduleCategory]!
   date: Date
+}
+
+type ScheduleCategory {
+  id: String!
+  schedule: String!
+  category: MenuCategory!
+  items: [MenuItem]!
 }
 
 input MenuItemInput {

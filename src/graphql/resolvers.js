@@ -45,12 +45,12 @@ module.exports = {
     const { firstName, lastName, email, pwd } = args.input;
     return await usersModel.signUp(firstName, lastName, email, pwd);
   },
+  menuSchedule: async function (args, requst) {
+    const { date } = args;
+    return await menuSchedule.getSchedule(date);
+  },
   setSchedule: async function (args, request) {
     const { items, date } = args;
     return await menuSchedule.setSchedule(items, date);
   },
-  getSchedule: async function (args, requst) {
-    const { date } = args;
-    return await menuSchedule.getSchedule(date);
-  }
 };
