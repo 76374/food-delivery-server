@@ -42,7 +42,6 @@ const setSchedule = async function (items, date) {
       categories.push(menuItem.category);
     }
   });
-  console.log(categories);
   const sheduleCategories = categories.map(
     (category) =>
       new ScheduleCategory({
@@ -54,6 +53,8 @@ const setSchedule = async function (items, date) {
   for (let sc of sheduleCategories) {
     await sc.save();
   }
+
+  menuSchedule.categories = sheduleCategories.map(i => i._id);
 
   await menuSchedule.save();
 
@@ -76,7 +77,6 @@ const getSchedule = async function (date) {
     c.items.map((i) => modelToPlainObject(i));
     c.category = modelToPlainObject(c.category);
   });
-  console.log(result);
   return result;
 };
 
