@@ -8,6 +8,11 @@ exports.unauthorized = {
   key: 'unauthorized',
   code: 401,
 };
+exports.wrongCredentials = {
+  message: 'Wrong user name and/or password',
+  key: 'wrong_credentials',
+  code: 401,
+};
 exports.validationFailed = {
   message: 'Validation failed',
   key: 'validation_failed',

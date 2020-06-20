@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const User = require('../mongoose/user');
-const { userExists, authorizationFailed, unauthorized } = require('../consts/errors');
+const { userExists, wrongCredentials, unauthorized } = require('../consts/errors');
 const getError = require('../utils/getError');
 const { Auth } = require('../consts/secret');
 const { modelToPlainObject } = require('./util');
@@ -50,11 +50,11 @@ const signIn = async function (email, pwd) {
 
   const user = await User.findOne({ email: email }).exec();
   if (!user) {
-    throw getError(authorizationFailed);
+    throw getError(wrongCredentials);
   }
   const pwdMatch = await bcrypt.compare(pwd, user.pwd);
   if (!pwdMatch) {
-    throw getError(authorizationFailed);
+    throw getError(wrongCredentials);
   }
   return await getAuthData(user);
 };
