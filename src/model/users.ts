@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { Document } from 'mongoose';
-import UserModel from '../mongoose/user';
+import UserModel from '../mongoose/UserModel';
 import { UserExistsError, WrongCredentialsError, UnauthorizedError } from '../consts/errors';
 import Secret from '../consts/secret';
 import { modelToPlainObject } from './util';

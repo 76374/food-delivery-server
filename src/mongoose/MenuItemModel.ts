@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
-import { MenuCategory } from './menuCategory';
+import { MenuCategory } from './MenuCategoryModel';
 
 export interface MenuItem extends Document {
   title: string;

@@ -1,5 +1,5 @@
-import MenuCategoryModel, { MenuCategory } from '../mongoose/menuCategory';
-import MenuItemModel, { MenuItem } from '../mongoose/menuItem';
+import MenuCategoryModel, { MenuCategory } from '../mongoose/MenuCategoryModel';
+import MenuItemModel, { MenuItem } from '../mongoose/MenuItemModel';
 import connect from '../mongoose/connect';
 import { ItemNotFoundError, CategoryNotFoundError, CategoryNotEmptyError } from '../consts/errors';
 import { modelToPlainObject } from './util';

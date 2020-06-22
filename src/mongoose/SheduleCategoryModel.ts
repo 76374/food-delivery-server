@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
-import { MenuSchedule } from './menuSchedule';
-import { MenuCategory } from './menuCategory';
-import { MenuItem } from './menuItem';
+import { MenuSchedule } from './MenuScheduleModel';
+import { MenuCategory } from './MenuCategoryModel';
+import { MenuItem } from './MenuItemModel';
 
 export interface SheduleCategory extends Document {
   schedule: MenuSchedule['_id'];

@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema, Model } from 'mongoose';
 
-import { MenuItem } from './menuItem';
-import { User } from './user';
+import { MenuItem } from './MenuItemModel';
+import { User } from './UserModel';
 
 export interface Order extends Document {
   items: OrderItem[];

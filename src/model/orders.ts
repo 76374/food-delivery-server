@@ -1,6 +1,6 @@
-import OrderModel, { OrderItem } from '../mongoose/order';
-import MenuItemModel from '../mongoose/menuItem';
-import UserModel from '../mongoose/user';
+import OrderModel, { OrderItem } from '../mongoose/OrderModel';
+import MenuItemModel from '../mongoose/MenuItemModel';
+import UserModel from '../mongoose/UserModel';
 import connect from '../mongoose/connect';
 import { ItemNotFoundError, WrongItemsCountError, UserNotFoundError } from '../consts/errors';
 import { modelToPlainObject } from './util';

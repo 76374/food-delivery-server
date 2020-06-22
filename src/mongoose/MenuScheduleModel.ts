@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
-import { SheduleCategory } from './sheduleCategory';
+import { SheduleCategory } from './SheduleCategoryModel';
 
 export interface MenuSchedule extends Document {
   date: Date;

@@ -1,9 +1,9 @@
 import { ObjectId } from 'mongodb';
 import { InvalidDateError, ItemNotFoundError } from '../consts/errors';
 import connect from '../mongoose/connect';
-import MenuSchedule from '../mongoose/menuSchedule';
-import MenuItem from '../mongoose/menuItem';
-import ScheduleCategory from '../mongoose/sheduleCategory';
+import MenuSchedule from '../mongoose/MenuScheduleModel';
+import MenuItem from '../mongoose/MenuItemModel';
+import ScheduleCategory from '../mongoose/SheduleCategoryModel';
 import { modelToPlainObject } from './util';
 
 const parseDate = (date: string) => {
