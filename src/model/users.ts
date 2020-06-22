@@ -1,17 +1,40 @@
-import util from 'util';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import User from '../mongoose/user';
+import { Document } from 'mongoose';
+import UserModel from '../mongoose/user';
 import { UserExistsError, WrongCredentialsError, UnauthorizedError } from '../consts/errors';
 import Secret from '../consts/secret';
 import { modelToPlainObject } from './util';
 import * as validator from './validator';
 
-const verify = util.promisify(jwt.verify);
-const sign = util.promisify(jwt.sign);
+interface TokenPayload {
+  userId: string;
+}
 
-//TODO: any
-const getAuthData = async function (user: any) {
+const verify = (token: string, secret: string): Promise<TokenPayload> =>
+  new Promise<TokenPayload>((resolve, reject) =>
+    jwt.verify(token, secret, (err: Error | null, decoded: object | undefined) => {
+      if (!err) {
+        const payload = decoded as TokenPayload;
+        resolve(payload);
+      } else {
+        reject(err);
+      }
+    })
+  );
+
+const sign = (payload: TokenPayload, secret: string): Promise<string> =>
+  new Promise<string>((resolve, reject) =>
+    jwt.sign(payload, secret, (err: Error | null, encoded: string | undefined) => {
+      if (!err) {
+        resolve(encoded);
+      } else {
+        reject(err);
+      }
+    })
+  );
+
+const getAuthData = async function (user: Document) {
   const payload = { userId: user._id.toString() };
   const token = await sign(payload, Secret.Auth);
   return {
@@ -20,19 +43,24 @@ const getAuthData = async function (user: any) {
   };
 };
 
-export const signUp = async function (firstName: string, lastName: string, email: string, pwd: string) {
+export const signUp = async function (
+  firstName: string,
+  lastName: string,
+  email: string,
+  pwd: string
+) {
   validator.validateFirstName(firstName);
   validator.validateLastName(lastName);
   validator.validateEmail(email);
   validator.validatePwd(pwd);
 
-  let user = await User.findOne({ email: email }).exec();
+  let user = await UserModel.findOne({ email: email }).exec();
   if (user) {
     throw new UserExistsError();
   }
 
   const pwdHash = await bcrypt.hash(pwd, 12);
-  user = new User({
+  user = new UserModel({
     firstName: firstName,
     lastName: lastName,
     email: email,
@@ -47,7 +75,7 @@ export const signIn = async function (email: string, pwd: string) {
   validator.validateEmail(email);
   validator.validatePwd(pwd);
 
-  const user = await User.findOne({ email: email }).exec();
+  const user = await UserModel.findOne({ email: email }).exec();
   if (!user) {
     throw new WrongCredentialsError();
   }
@@ -58,9 +86,8 @@ export const signIn = async function (email: string, pwd: string) {
   return await getAuthData(user);
 };
 
-export const checkAutorization = async function (token: string) {
-  //TODO: any
-  let data: any = null;
+export const checkAutorization = async function (token: string | null) {
+  let data: TokenPayload | null = null;
   if (token) {
     try {
       data = await verify(token, Secret.Auth);

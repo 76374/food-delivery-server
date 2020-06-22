@@ -1,21 +1,33 @@
-import mongoose from 'mongoose';
+import mongoose, { Document, Schema, Model } from 'mongoose';
 
-import MenuItem from './menuItem';
-import User from './user';
+import { MenuItem } from './menuItem';
+import { User } from './user';
 
-const Schema = mongoose.Schema;
+export interface Order extends Document {
+  items: OrderItem[];
+  date: Date;
+  price: number;
+  owner: User['_id'];
+}
 
-const itemSchema = new Schema({
-  menuItem: { type: Schema.Types.ObjectId, ref: MenuItem.modelName, required: true },
-  count: { type: Number, required: true },
-});
+export interface OrderItem {
+  menuItem: MenuItem['_id'];
+  count: number;
+}
 
 const orderSchema = new Schema({
-  items: { type: [itemSchema], required: true },
+  items: [
+    {
+      menuItem: { type: Schema.Types.ObjectId, ref: 'MenuItem', required: true },
+      count: { type: Number, required: true },
+    },
+  ],
   date: { type: Date, required: true },
   price: { type: Number, required: true },
-  owner: { type: Schema.Types.ObjectId, ref: User.modelName, required: true },
+  owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
 });
 
 const modelName = 'Order';
-export default mongoose.models[modelName] || mongoose.model(modelName, orderSchema);
+const OrderModel =
+  (mongoose.models[modelName] as Model<Order>) || mongoose.model<Order>(modelName, orderSchema);
+export default OrderModel;

@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb';
 import { InvalidDateError, ItemNotFoundError } from '../consts/errors';
 import connect from '../mongoose/connect';
 import MenuSchedule from '../mongoose/menuSchedule';
@@ -12,6 +13,8 @@ const parseDate = (date: string) => {
   }
   return new Date(Date.UTC(parsedDate.getFullYear(), parsedDate.getMonth(), parsedDate.getDate()));
 };
+
+const containsId = (arr: ObjectId[], id: ObjectId) => arr.find((el) => el.equals(id));
 
 export const setSchedule = async function (items: string[], date: string) {
   if (!items || !items.length) {
@@ -33,11 +36,7 @@ export const setSchedule = async function (items: string[], date: string) {
       date,
     });
   }
-
-  //TODO: any
-  const containsId = (arr: any[], id: any) => arr.find((el) => el.equals(id));
-  //TODO: any
-  const categories: any[] = [];
+  const categories: ObjectId[] = [];
   menuItems.forEach((menuItem) => {
     if (!containsId(categories, menuItem.category)) {
       categories.push(menuItem.category);
@@ -73,12 +72,5 @@ export const getSchedule = async function (date: string) {
   if (!menuSchedule) {
     return null;
   }
-  const result = modelToPlainObject(menuSchedule, 'categories');
-  //TODO: any
-  result.categories.forEach((c: any) => {
-    //TODO: any
-    c.items.map((i: any) => modelToPlainObject(i));
-    c.category = modelToPlainObject(c.category);
-  });
-  return result;
+  return modelToPlainObject(menuSchedule);;
 };

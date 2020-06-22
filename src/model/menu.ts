@@ -1,5 +1,5 @@
-import MenuCategory from '../mongoose/menuCategory';
-import MenuItem from '../mongoose/menuItem';
+import MenuCategoryModel, { MenuCategory } from '../mongoose/menuCategory';
+import MenuItemModel, { MenuItem } from '../mongoose/menuItem';
 import connect from '../mongoose/connect';
 import { ItemNotFoundError, CategoryNotFoundError, CategoryNotEmptyError } from '../consts/errors';
 import { modelToPlainObject } from './util';
@@ -8,14 +8,14 @@ import { validateArgs } from './validator';
 export const getMenu = async function () {
   await connect();
 
-  const categories = await MenuCategory.find({}).populate('items');
-  return categories.map((cat) => modelToPlainObject(cat, 'items'));
+  const categories = await MenuCategoryModel.find({}).populate('items');
+  return categories.map(modelToPlainObject);
 };
 
 export const createMenuCategory = async function (title: string) {
   validateArgs({ title });
 
-  const category = new MenuCategory({
+  const category = new MenuCategoryModel({
     title,
     items: [],
   });
@@ -27,7 +27,7 @@ export const createMenuCategory = async function (title: string) {
 export const editMenuCategory = async function (id: string, title: string) {
   validateArgs({ id, title });
 
-  const category = await MenuCategory.findById(id).exec();
+  const category = await MenuCategoryModel.findById(id).exec();
   if (!category) {
     throw new CategoryNotFoundError();
   }
@@ -40,14 +40,14 @@ export const editMenuCategory = async function (id: string, title: string) {
 export const deleteMenuCategory = async function (id: string) {
   validateArgs({ id });
 
-  const category = await MenuCategory.findById(id).exec();
+  const category = await MenuCategoryModel.findById(id).exec();
   if (!category) {
     throw new CategoryNotFoundError();
   }
   if (category.items.length > 0) {
     throw new CategoryNotEmptyError();
   }
-  await MenuCategory.deleteOne({ _id: category._id }).exec();
+  await MenuCategoryModel.deleteOne({ _id: category._id }).exec();
 };
 
 export const createMenuItem = async function (title: string, price: number, categoryId: string) {
@@ -55,12 +55,12 @@ export const createMenuItem = async function (title: string, price: number, cate
 
   await connect();
 
-  const category = await MenuCategory.findById(categoryId).exec();
+  const category = await MenuCategoryModel.findById(categoryId).exec();
   if (!category) {
     throw new CategoryNotFoundError();
   }
 
-  const item = new MenuItem({
+  const item = new MenuItemModel({
     title,
     price,
     category: category._id,
@@ -84,7 +84,7 @@ export const editMenuItem = async function (
 
   await connect();
 
-  const item = await MenuItem.findById(id);
+  const item = await MenuItemModel.findById(id);
   if (!item) {
     throw new ItemNotFoundError();
   }
@@ -96,23 +96,22 @@ export const editMenuItem = async function (
     item.price = price;
   }
   if (categoryId && item.category.toString() !== categoryId) {
-    const newCategory = await MenuCategory.findById(categoryId).exec();
+    const newCategory = await MenuCategoryModel.findById(categoryId).exec();
     if (!newCategory) {
       throw new CategoryNotFoundError();
     }
     newCategory.items.push(item._id);
     await newCategory.save();
 
-    const oldCategory = await MenuCategory.findById(item.category).exec();
+    const oldCategory = await MenuCategoryModel.findById(item.category).exec();
     if (oldCategory) {
-      //TODO: any
-      oldCategory.items = oldCategory.items.filter((i: any) => !i._id.equals(item._id));
+      oldCategory.items = oldCategory.items.filter((i: MenuItem) => !i._id.equals(item._id));
       await oldCategory.save();
     }
   }
 
   await item.save();
-  return { ...item._doc, id: item._id.toString() };
+  return modelToPlainObject(item);
 };
 
 export const deleteMenuItem = async function (id: string) {
@@ -120,15 +119,17 @@ export const deleteMenuItem = async function (id: string) {
 
   await connect();
 
-  const item = await MenuItem.findByIdAndRemove(id).exec();
+  const item = await MenuItemModel.findByIdAndRemove(id).exec();
   if (!item) {
     throw new ItemNotFoundError();
   }
 
-  const category = await MenuCategory.findById(item.category).exec();
+  const category = await MenuCategoryModel.findById(item.category).exec();
   if (category) {
     //TODO: any
-    category.items = category.items.filter((i: any) => !i._id.equals(item._id));
+    category.items = category.items.filter((i: MenuCategory) => !i._id.equals(item._id));
     await category.save();
   }
+
+  return true;
 };

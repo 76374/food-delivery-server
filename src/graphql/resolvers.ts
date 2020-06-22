@@ -1,56 +1,56 @@
+import type { Request } from 'express';
 import * as menuModel from '../model/menu';
 import * as ordersModel from '../model/orders';
 import * as usersModel from '../model/users';
 import * as menuSchedule from '../model/menuSchedule';
 import { getToken } from '../utils/requestUtil';
 
-//TODO: remove any
 export default {
-  menu: async function (args: any, request: any) {
+  menu: async function () {
     return await menuModel.getMenu();
   },
-  createMenuCategory: async function (args: any, request: any) {
+  createMenuCategory: async function (args: any) {
     return await menuModel.createMenuCategory(args.title);
   },
-  editMenuCategory: async function (args: any, request: any) {
+  editMenuCategory: async function (args: any) {
     return await menuModel.editMenuCategory(args.id, args.title);
   },
-  deleteMenuCategory: async function (args: any, request: any) {
+  deleteMenuCategory: async function (args: any) {
     return await menuModel.deleteMenuCategory(args.id);
   },
-  createMenuItem: async function (args: any, request: any) {
+  createMenuItem: async function (args: any) {
     const { title, price, menuCategory } = args.menuItem;
     return await menuModel.createMenuItem(title, price, menuCategory);
   },
-  editMenuItem: async function (args: any, request: any) {
+  editMenuItem: async function (args: any) {
     const { title, price, menuCategory } = args.menuItem;
     return await menuModel.editMenuItem(args.id, title, price, menuCategory);
   },
-  deleteMenuItem: async function (args: any, request: any) {
+  deleteMenuItem: async function (args: any) {
     await menuModel.deleteMenuItem(args.id);
     return null;
   },
-  createOrder: async function (args: any, request: any) {
+  createOrder: async function (args: any, request: Request) {
     const userId = await usersModel.checkAutorization(getToken(request));
     const { items } = args.input;
     return await ordersModel.createOrder(items, userId);
   },
-  orders: async function (args: any, request: any) {
+  orders: async function () {
     return await ordersModel.getOrders();
   },
-  signIn: async function (args: any, request: any) {
+  signIn: async function (args: any) {
     const { email, pwd } = args.input;
     return await usersModel.signIn(email, pwd);
   },
-  signUp: async function (args: any, request: any) {
+  signUp: async function (args: any) {
     const { firstName, lastName, email, pwd } = args.input;
     return await usersModel.signUp(firstName, lastName, email, pwd);
   },
-  menuSchedule: async function (args: any, request: any) {
+  menuSchedule: async function (args: any) {
     const { date } = args;
     return await menuSchedule.getSchedule(date);
   },
-  setSchedule: async function (args: any, request: any) {
+  setSchedule: async function (args: any) {
     const { items, date } = args;
     return await menuSchedule.setSchedule(items, date);
   },

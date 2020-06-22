@@ -1,5 +1,6 @@
-//TODO: add type
-export const getToken = (request: any) => {
+import type { Request } from 'express';
+
+export const getToken = (request: Request) => {
     const value = request.get('Authorization');
     if (value) {
         const parts = value.split(' ');

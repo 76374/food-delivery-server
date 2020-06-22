@@ -1,21 +1,20 @@
-//TODO: any
-export const modelToPlainObject = (model: any, nestedProps?: string) => {
-  if (!model._doc) {
-    throw new Error('unexpected model');
-  }
-  const result = { ...model._doc };
-  result.id = result._id.toString();
-  delete result._id;
+import { Document } from "mongoose";
 
-  if (nestedProps) {
-    const prop = result[nestedProps];
-    if (prop) {
-      if (prop instanceof Array) {
-        result[nestedProps] = prop.map((i) => modelToPlainObject(i));
-      } else {
-        result[nestedProps] = modelToPlainObject(result[nestedProps]);
-      }
+const replaceIds = (doc: any) => {
+  if (typeof doc === 'object') {
+    if (doc.hasOwnProperty('_id')) {
+      doc.id = doc._id.toString();
+    }
+    if (doc instanceof Array) {
+      doc.forEach(replaceIds);
+    } else {
+      Object.values(doc).forEach(replaceIds);
     }
   }
+}
+
+export const modelToPlainObject = (model: Document) => {
+  const result = model.toObject({versionKey: false});
+  replaceIds(result);
   return result;
 };
