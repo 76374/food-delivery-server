@@ -22,6 +22,8 @@ type Mutation {
   deleteMenuItem(id: String!): Void
 
   setSchedule(items:[String!]!, date: Date!): String
+
+  signInAdmin(name: String!, pwd: String!): String
 }
 
 scalar Date

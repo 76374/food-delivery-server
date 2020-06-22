@@ -41,8 +41,6 @@ export const createOrder = async function (items: OrderInput[], userId: string) 
     orderPrice += menuItem.price;
   }
 
-  console.log(orderItems);
-
   const order = new OrderModel({
     items: orderItems,
     date: new Date(),

@@ -3,6 +3,7 @@ import * as menuModel from '../model/menu';
 import * as ordersModel from '../model/orders';
 import * as usersModel from '../model/users';
 import * as menuSchedule from '../model/menuSchedule';
+import * as adminUser from '../model/adminUser';
 import { getToken } from '../utils/requestUtil';
 
 export default {
@@ -54,4 +55,8 @@ export default {
     const { items, date } = args;
     return await menuSchedule.setSchedule(items, date);
   },
+  signInAdmin: async function (args: any) {
+    const { name, pwd } = args;
+    return await adminUser.signIn(name, pwd);
+  }
 };

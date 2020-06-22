@@ -5,6 +5,7 @@ import MenuSchedule from '../mongoose/MenuScheduleModel';
 import MenuItem from '../mongoose/MenuItemModel';
 import ScheduleCategory from '../mongoose/SheduleCategoryModel';
 import { modelToPlainObject } from './util';
+import { validateArg } from './validator';
 
 const parseDate = (date: string) => {
   let parsedDate = new Date(date);
@@ -17,7 +18,10 @@ const parseDate = (date: string) => {
 const containsId = (arr: ObjectId[], id: ObjectId) => arr.find((el) => el.equals(id));
 
 export const setSchedule = async function (items: string[], date: string) {
-  if (!items || !items.length) {
+  validateArg(items, 'items');
+  validateArg(date, 'date');
+
+  if (!items.length) {
     new ItemNotFoundError();
   }
   const parsedDate = parseDate(date);
@@ -62,6 +66,8 @@ export const setSchedule = async function (items: string[], date: string) {
 };
 
 export const getSchedule = async function (date: string) {
+  validateArg(date, 'date');
+
   const parsedDate = parseDate(date);
   await connect();
 

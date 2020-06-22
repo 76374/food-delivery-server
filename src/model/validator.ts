@@ -7,6 +7,7 @@ const MIN_PWD_LENGTH = 6;
 const MAX_PWD_LENGTH = 128;
 
 const validateName = (value: string, field: string) => {
+  validateArg(value, field);
   if (!validator.checkLength(value, MIN_NAME_LENGTH, MAX_NAME_LENGTH)) {
     throw new ValidationFailedError(field, 'length', MIN_NAME_LENGTH + '-' + MAX_NAME_LENGTH);
   }
@@ -24,14 +25,16 @@ export const validateLastName = (value: string) => {
 };
 
 export const validateEmail = (value: string) => {
+  validateArg(value, 'email');
   if (!validator.isEmail(value)) {
     throw new ValidationFailedError('email', 'invalidFormat', '-');
   }
 };
 
 export const validatePwd = (value: string) => {
+  validateArg(value, 'password');
   if (!validator.checkLength(value, MIN_PWD_LENGTH, MAX_PWD_LENGTH)) {
-    throw new ValidationFailedError('pwd', 'length', MIN_PWD_LENGTH + '-' + MAX_PWD_LENGTH);
+    throw new ValidationFailedError('password', 'length', MIN_PWD_LENGTH + '-' + MAX_PWD_LENGTH);
   }
 };
 

@@ -1,42 +1,18 @@
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 import { Document } from 'mongoose';
 import UserModel from '../mongoose/UserModel';
 import { UserExistsError, WrongCredentialsError, UnauthorizedError } from '../consts/errors';
 import Secret from '../consts/secret';
-import { modelToPlainObject } from './util';
+import { modelToPlainObject, verifyToken, signToken } from './util';
 import * as validator from './validator';
 
 interface TokenPayload {
   userId: string;
 }
 
-const verify = (token: string, secret: string): Promise<TokenPayload> =>
-  new Promise<TokenPayload>((resolve, reject) =>
-    jwt.verify(token, secret, (err: Error | null, decoded: object | undefined) => {
-      if (!err) {
-        const payload = decoded as TokenPayload;
-        resolve(payload);
-      } else {
-        reject(err);
-      }
-    })
-  );
-
-const sign = (payload: TokenPayload, secret: string): Promise<string> =>
-  new Promise<string>((resolve, reject) =>
-    jwt.sign(payload, secret, (err: Error | null, encoded: string | undefined) => {
-      if (!err) {
-        resolve(encoded);
-      } else {
-        reject(err);
-      }
-    })
-  );
-
 const getAuthData = async function (user: Document) {
   const payload = { userId: user._id.toString() };
-  const token = await sign(payload, Secret.Auth);
+  const token = await signToken(payload, Secret.Auth);
   return {
     token: token,
     user: modelToPlainObject(user),
@@ -73,7 +49,7 @@ export const signUp = async function (
 
 export const signIn = async function (email: string, pwd: string) {
   validator.validateEmail(email);
-  validator.validatePwd(pwd);
+  validator.validateArg(pwd, 'password');
 
   const user = await UserModel.findOne({ email: email }).exec();
   if (!user) {
@@ -86,11 +62,11 @@ export const signIn = async function (email: string, pwd: string) {
   return await getAuthData(user);
 };
 
-export const checkAutorization = async function (token: string | null) {
+export const checkAutorization = async function (token: any) {
   let data: TokenPayload | null = null;
-  if (token) {
+  if (token && typeof token === 'string') {
     try {
-      data = await verify(token, Secret.Auth);
+      data = await verifyToken(token, Secret.Auth);
     } catch (err) {
       throw new UnauthorizedError();
     }
